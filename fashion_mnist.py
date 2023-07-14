@@ -34,11 +34,13 @@ class NeuralNetwork(nn.Module):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(28*28, 256),
+            nn.Linear(28*28, 64),
             nn.ReLU(),
-            nn.Linear(256, 256),
+            nn.Linear(64, 64),
             nn.ReLU(),
-            nn.Linear(256, 10)
+            nn.Linear(64, 64),
+            nn.ReLU(),
+            nn.Linear(64, 10)
             )
 
     def forward(self, x):
@@ -83,32 +85,11 @@ def test(dataloader, model, loss_fn):
     correct /= size
     print(f'TestError: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n')
 
-epochs = 7
+epochs = 10
 for t in range(epochs):
     print('--------------------')
     train(train_dataloader, model, loss_fn, optimizer)
     test(test_dataloader, model, loss_fn)
-
-# classes = [
-#     "T-shirt/top",
-#     "Trouser",
-#     "Pullover",
-#     "Dress",
-#     "Coat",
-#     "Sandal",
-#     "Shirt",
-#     "Sneaker",
-#     "Bag",
-#     "Ankle boot",
-# ]
-
-# model.eval()
-# x, y = test_data[0][0], test_data[0][1]
-# with torch.no_grad():
-#     x = x.to(device)
-#     pred = model(x)
-#     predicted, actual = classes[pred[0].argmax(0)], classes[y]
-#     print(f'Predicted: "{predicted}", Actual: "{actual}"')
 
 import matplotlib.pyplot as plt
 
@@ -127,8 +108,8 @@ labels_map = [
 figure = plt.figure(figsize=(8, 8))
 cols, rows = 2, 3
 for i in range(1, cols * rows + 1):
-    sample_idx = torch.randint(len(training_data), size=(1,)).item()
-    img, label = training_data[sample_idx]
+    sample_idx = torch.randint(len(test_data), size=(1,)).item()
+    img, label = test_data[sample_idx]
 
     x = img.to(device)
     pred = model(x)
